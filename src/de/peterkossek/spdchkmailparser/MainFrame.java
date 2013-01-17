@@ -8,6 +8,11 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -31,8 +36,14 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JTable table;
 	private JButton btnParse;
 	private SpeedCheckTableModel speedCheckTableModel;
+	private Properties configProperties;
+	
+	private static final String INI_FILE_NAME = "SpeedCheckMailParser.ini";
+	
+	private static final String FOLDER_PATH_INI = "folder.path";
 	
 	public MainFrame() {
+		loadConfig();
 		setMinimumSize(new Dimension(640, 400));
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout(0, 0));
@@ -58,6 +69,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		panel.add(lblFolder, gbc_lblFolder);
 		
 		txfFolderPath = new JTextField();
+		txfFolderPath.setText(configProperties.getProperty(FOLDER_PATH_INI, ""));
 		GridBagConstraints gbc_txfFolderPath = new GridBagConstraints();
 		gbc_txfFolderPath.insets = new Insets(0, 0, 5, 5);
 		gbc_txfFolderPath.fill = GridBagConstraints.HORIZONTAL;
@@ -112,7 +124,10 @@ public class MainFrame extends JFrame implements ActionListener {
 			jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int option = jfc.showOpenDialog(this);
 			if (option == JFileChooser.APPROVE_OPTION) {
-				txfFolderPath.setText(jfc.getSelectedFile().getAbsolutePath());
+				String path = jfc.getSelectedFile().getAbsolutePath();
+				txfFolderPath.setText(path);
+				configProperties.put(FOLDER_PATH_INI, path);
+				saveConfig();
 			}
 		} else if (source.equals(btnParse)) {
 			File folder = new File(txfFolderPath.getText());
@@ -142,5 +157,21 @@ public class MainFrame extends JFrame implements ActionListener {
 		MainFrame frame = new MainFrame();
 		frame.setVisible(true);
 	}
+
+	private void loadConfig() {
+		configProperties = new Properties();
+		try {
+			configProperties.load(new FileInputStream(INI_FILE_NAME));
+		} catch (Exception e) {
+			// doesn't matter
+		}
+	}
 	
+	private void saveConfig() {
+		try {
+			configProperties.store(new FileOutputStream(INI_FILE_NAME), null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
