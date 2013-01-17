@@ -20,6 +20,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableColumnModel;
+
 import java.awt.Font;
 
 public class MainFrame extends JFrame implements ActionListener {
@@ -95,6 +97,9 @@ public class MainFrame extends JFrame implements ActionListener {
 		table.setFont(new Font("Monospaced", Font.PLAIN, 11));
 		speedCheckTableModel = new SpeedCheckTableModel();
 		table.setModel(speedCheckTableModel);
+		TableColumnModel columnModel = table.getColumnModel();
+		columnModel.getColumn(1).setCellRenderer(new DoubleValueCellRenderer());
+		columnModel.getColumn(2).setCellRenderer(new DoubleValueCellRenderer());
 		scrollPane.setViewportView(table);
 	}
 
