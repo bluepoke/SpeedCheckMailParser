@@ -6,8 +6,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MailParser {
+
+	private static final String MATCHER_REGEX = "\\d\\d [A-Z][a-z][a-z] \\d\\d\\d\\d \\d\\d:\\d\\d:\\d\\d";
+	private static final String DATE_REGEX = ".*"+MATCHER_REGEX+".*";
+	private static Pattern pattern = Pattern.compile(MATCHER_REGEX);
 
 	public static SpeedCheckData parse(File file) {
 		SpeedCheckData data = null;
@@ -42,9 +48,14 @@ public class MailParser {
 					int start = line.indexOf(":");
 					ticketNumber = line.substring(start+2);
 				}
-				else if (line.matches(".*\\d\\d [A-Z][a-z][a-z] \\d\\d\\d\\d \\d\\d:\\d\\d:\\d\\d.*")) {
-					line = line.substring(line.indexOf(",")+2);
-					date = sdf.parse(line);
+				else if (line.matches(DATE_REGEX)) {
+					Matcher matcher = pattern.matcher(line);
+					if (matcher.find()) {
+						int start = matcher.start();
+						int end = matcher.end();
+						line = line.substring(start, end);
+						date = sdf.parse(line);
+					}
 				}
 			}
 			if (ticketNumber != null && downSpeed != -1 && upSpeed != -1 && date != null) {
