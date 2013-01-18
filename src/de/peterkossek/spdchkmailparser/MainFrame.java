@@ -41,6 +41,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	private static final String INI_FILE_NAME = "SpeedCheckMailParser.ini";
 	
 	private static final String FOLDER_PATH_INI = "folder.path";
+	private JPanel panel_1;
+	private JButton btnVisualize;
 	
 	public MainFrame() {
 		loadConfig();
@@ -87,19 +89,40 @@ public class MainFrame extends JFrame implements ActionListener {
 		gbc_btnOpen.gridy = 0;
 		panel.add(btnOpen, gbc_btnOpen);
 		
+		panel_1 = new JPanel();
+		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
+		gbc_panel_1.gridwidth = 3;
+		gbc_panel_1.fill = GridBagConstraints.BOTH;
+		gbc_panel_1.insets = new Insets(0, 0, 5, 5);
+		gbc_panel_1.gridx = 0;
+		gbc_panel_1.gridy = 1;
+		panel.add(panel_1, gbc_panel_1);
+		GridBagLayout gbl_panel_1 = new GridBagLayout();
+		gbl_panel_1.columnWidths = new int[]{0, 0, 0};
+		gbl_panel_1.rowHeights = new int[]{0, 0};
+		gbl_panel_1.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_1.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+		panel_1.setLayout(gbl_panel_1);
+		
 		btnParse = new JButton("Parse");
-		btnParse.addActionListener(this);
 		GridBagConstraints gbc_btnParse = new GridBagConstraints();
-		gbc_btnParse.insets = new Insets(0, 0, 5, 0);
+		gbc_btnParse.insets = new Insets(0, 0, 0, 5);
 		gbc_btnParse.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnParse.gridx = 2;
-		gbc_btnParse.gridy = 1;
-		panel.add(btnParse, gbc_btnParse);
+		gbc_btnParse.gridx = 0;
+		gbc_btnParse.gridy = 0;
+		panel_1.add(btnParse, gbc_btnParse);
+		
+		btnVisualize = new JButton("Visualize");
+		btnVisualize.addActionListener(this);
+		GridBagConstraints gbc_btnVisualize = new GridBagConstraints();
+		gbc_btnVisualize.gridx = 1;
+		gbc_btnVisualize.gridy = 0;
+		panel_1.add(btnVisualize, gbc_btnVisualize);
+		btnParse.addActionListener(this);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.gridwidth = 3;
-		gbc_scrollPane.insets = new Insets(0, 0, 0, 5);
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 2;
@@ -143,6 +166,8 @@ public class MainFrame extends JFrame implements ActionListener {
 			SpeedCheckData[] data = MailParser.parse(files);
 			Arrays.sort(data, SpeedCheckData.COMPARATOR);
 			speedCheckTableModel.setData(data);
+		} else if (source.equals(btnVisualize)) {
+			//TODO: visualize
 		}
 	}
 
