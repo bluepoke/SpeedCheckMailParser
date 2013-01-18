@@ -2,6 +2,7 @@ package de.peterkossek.spdchkmailparser;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -9,9 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Properties;
 
 import javax.swing.JButton;
@@ -27,10 +26,10 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumnModel;
 
-import java.awt.Font;
-
 public class MainFrame extends JFrame implements ActionListener {
 
+	private static final long serialVersionUID = 1L;
+	
 	private JTextField txfFolderPath;
 	private JButton btnOpen;
 	private JTable table;

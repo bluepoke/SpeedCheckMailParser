@@ -1,8 +1,5 @@
 package de.peterkossek.spdchkmailparser;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,9 +8,11 @@ import javax.swing.table.DefaultTableModel;
 
 public class SpeedCheckTableModel extends DefaultTableModel {
 	
+	private static final long serialVersionUID = 1L;
+
 	private static SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 	
-	Class[] columnTypes = new Class[] {
+	Class<?>[] columnTypes = new Class[] {
 		String.class, Double.class, Double.class, String.class
 	};
 	static String[] columnTitles = new String[] {"Date", "Upstream", "Downstream", "Ticket"};
@@ -24,7 +23,7 @@ public class SpeedCheckTableModel extends DefaultTableModel {
 		super(columnTitles, 0);
 	}
 
-	public Class getColumnClass(int columnIndex) {
+	public Class<?> getColumnClass(int columnIndex) {
 		return columnTypes[columnIndex];
 	}
 	

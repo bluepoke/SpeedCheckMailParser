@@ -6,9 +6,10 @@ import java.text.DecimalFormat;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 
 public class DoubleValueCellRenderer extends DefaultTableCellRenderer {
+
+	private static final long serialVersionUID = 1L;
 
 	private static DecimalFormat df = new DecimalFormat("0.00");
 	
