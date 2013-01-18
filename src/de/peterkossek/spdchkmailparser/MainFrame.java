@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -26,6 +27,15 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumnModel;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.time.Millisecond;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
 
 public class MainFrame extends JFrame implements ActionListener {
 
@@ -43,6 +53,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	private static final String FOLDER_PATH_INI = "folder.path";
 	private JPanel panel_1;
 	private JButton btnVisualize;
+
+	private SpeedCheckData[] parsedData;
 	
 	public MainFrame() {
 		loadConfig();
@@ -163,11 +175,29 @@ public class MainFrame extends JFrame implements ActionListener {
 				return;
 			}
 			File[] files = folder.listFiles();
-			SpeedCheckData[] data = MailParser.parse(files);
-			Arrays.sort(data, SpeedCheckData.COMPARATOR);
-			speedCheckTableModel.setData(data);
+			parsedData = MailParser.parse(files);
+			Arrays.sort(parsedData, SpeedCheckData.COMPARATOR);
+			speedCheckTableModel.setData(parsedData);
 		} else if (source.equals(btnVisualize)) {
-			//TODO: visualize
+			TimeSeriesCollection tsc = new TimeSeriesCollection();
+			TimeSeries upstreamTimeSeries = new TimeSeries("Upstream");
+			TimeSeries downstreamTimeSeries = new TimeSeries("Downstream");
+			for (SpeedCheckData scd : parsedData) {
+				upstreamTimeSeries.add(new Millisecond(scd.getDate()), scd.getUpSpeed());
+				downstreamTimeSeries.add(new Millisecond(scd.getDate()), scd.getDownSpeed());
+			}
+			tsc.addSeries(upstreamTimeSeries);
+			tsc.addSeries(downstreamTimeSeries);
+			JFreeChart timeSeriesChart = ChartFactory.createTimeSeriesChart("Graph", "Date", "Speed", tsc, true, true, false);
+			XYPlot plot = (XYPlot) timeSeriesChart.getPlot();
+			DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
+			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+			dateAxis.setDateFormatOverride(sdf);
+			dateAxis.setVerticalTickLabels(true);
+			ChartFrame cf = new ChartFrame("Chart", timeSeriesChart);
+			cf.setMinimumSize(new Dimension(600, 400));
+			cf.setLocationRelativeTo(this);
+			cf.setVisible(true);
 		}
 	}
 
