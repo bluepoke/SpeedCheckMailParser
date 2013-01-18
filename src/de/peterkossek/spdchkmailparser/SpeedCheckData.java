@@ -1,8 +1,17 @@
 package de.peterkossek.spdchkmailparser;
 
+import java.util.Comparator;
 import java.util.Date;
 
 public class SpeedCheckData {
+	
+	public static final Comparator<SpeedCheckData> COMPARATOR = new Comparator<SpeedCheckData>() {
+		
+		@Override
+		public int compare(SpeedCheckData data1, SpeedCheckData data2) {
+			return data1.getDate().compareTo(data2.getDate());
+		}
+	}; 
 	
 	private String	ticketNumber;
 	private Date	date;

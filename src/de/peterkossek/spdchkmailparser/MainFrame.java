@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Arrays;
 import java.util.Properties;
 
 import javax.swing.JButton;
@@ -140,6 +141,7 @@ public class MainFrame extends JFrame implements ActionListener {
 			}
 			File[] files = folder.listFiles();
 			SpeedCheckData[] data = MailParser.parse(files);
+			Arrays.sort(data, SpeedCheckData.COMPARATOR);
 			speedCheckTableModel.setData(data);
 		}
 	}
