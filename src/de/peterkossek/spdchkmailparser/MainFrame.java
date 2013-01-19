@@ -13,6 +13,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.swing.JButton;
@@ -33,7 +35,7 @@ import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.data.time.Millisecond;
+import org.jfree.data.time.Minute;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
@@ -180,19 +182,27 @@ public class MainFrame extends JFrame implements ActionListener {
 			speedCheckTableModel.setData(parsedData);
 		} else if (source.equals(btnVisualize)) {
 			TimeSeriesCollection tsc = new TimeSeriesCollection();
-			TimeSeries upstreamTimeSeries = new TimeSeries("Upstream");
-			TimeSeries downstreamTimeSeries = new TimeSeries("Downstream");
+			TimeSeries ts = new TimeSeries("");
+			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+			int previousDay = 0;
+			Calendar calendar = Calendar.getInstance();
 			for (SpeedCheckData scd : parsedData) {
-				upstreamTimeSeries.add(new Millisecond(scd.getDate()), scd.getUpSpeed());
-				downstreamTimeSeries.add(new Millisecond(scd.getDate()), scd.getDownSpeed());
+				Date date = scd.getDate();
+				double value = scd.getDownSpeed();
+				calendar.setTime(date);
+				int day = calendar.get(Calendar.DAY_OF_MONTH);
+				if (day != previousDay) {
+					previousDay = day;
+					ts = new TimeSeries(sdf.format(date));
+					tsc.addSeries(ts);
+				}
+				ts.add(new Minute(calendar.get(Calendar.MINUTE), calendar.get(Calendar.HOUR_OF_DAY), 1, 1, 2000), value);
 			}
-			tsc.addSeries(upstreamTimeSeries);
-			tsc.addSeries(downstreamTimeSeries);
 			JFreeChart timeSeriesChart = ChartFactory.createTimeSeriesChart("Graph", "Date", "Speed", tsc, true, true, false);
 			XYPlot plot = (XYPlot) timeSeriesChart.getPlot();
 			DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
-			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-			dateAxis.setDateFormatOverride(sdf);
+			SimpleDateFormat sdfAxis = new SimpleDateFormat("HH:mm");
+			dateAxis.setDateFormatOverride(sdfAxis);
 			dateAxis.setVerticalTickLabels(true);
 			ChartFrame cf = new ChartFrame("Chart", timeSeriesChart);
 			cf.setMinimumSize(new Dimension(600, 400));
